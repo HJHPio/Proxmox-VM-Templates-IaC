@@ -1,0 +1,17 @@
+Description:  
+
+Proxmox VM Templates creation scripts automated and provisioned with OpenTofu (Open Source fork of Terraform).
+
+Tags/Labels:  
+
+proxmox; vm-templates; automation; opentofu; terraform; 
+
+Mirrors list:  
+
+- https://github.com/HJHPio/Proxmox-VM-Templates-IaC
+  
+- https://gitlab.com/HJHPio/Proxmox-VM-Templates-IaC
+  
+Parent project: [OwnLab](https://github.com/orgs/HJHPio/projects/2)  
+
+![OwnLabLogo](./IMGs/OwnLab/OwnLab-Logo-1_V2024.11.28.png)

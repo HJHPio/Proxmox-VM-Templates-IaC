@@ -1,0 +1,5 @@
+# Sensitive files
+.env
+*.env
+*.key
+*.pass

@@ -1,0 +1,22 @@
+proxmox_host              = "your-proxmox-ip-or-url"
+proxmox_user              = "your-proxmox-root-username"
+proxmox_password          = "your-proxmox-password"
+script_path               = "../scripts/createCustomizedTemplateVM.sh"
+
+vm_template_storage_name  = "big-data"
+ssh_public_keys_src       = "../keys/ssh-pub-keys.key"
+
+# CentOS VM configuration
+centos_image_file          = "/var/lib/vz/template/iso/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2"
+centos_image_url           = "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2"
+centos_template_id         = "10000"
+centos_template_name       = "CentOS-S9-CI-SSH-TF"
+centos_template_password   = "centospass"
+centos_template_user       = "centosuser"
+
+# FCOS VM configuration for OKD
+fcos_image_file            = "/var/lib/vz/template/iso/fedora-coreos-39.20240210.3.0-qemu.x86_64.qcow2.xz"
+fcos_image_url             = "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/39.20240210.3.0/x86_64/fedora-coreos-39.20240210.3.0-qemu.x86_64.qcow2.xz"
+fcos_template_id           = "11000"
+fcos_template_name         = "FCOS-39-QCOW2-TF"
+fcos_additional_flags      = "--skip-cloud-init-settings"

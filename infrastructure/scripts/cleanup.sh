@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Variables passed from Terraform
+PROXMOX_HOST=$1
+PROXMOX_USER=$2
+PRIVATE_KEY_PATH=$3
+CENTOS_TEMPLATE_ID=$4
+FCOS_TEMPLATE_ID=$5
+CENTOS_IMAGE_FILE=$6
+FCOS_IMAGE_FILE=$7
+SCRIPT_PATH=$8
+
+# The cleanup logic
+ssh -i $PRIVATE_KEY_PATH $PROXMOX_USER@$PROXMOX_HOST <<EOF
+  qm destroy $CENTOS_TEMPLATE_ID --purge
+  qm destroy $FCOS_TEMPLATE_ID --purge
+  rm -f $CENTOS_IMAGE_FILE
+  rm -f $FCOS_IMAGE_FILE
+  rm -f $SCRIPT_PATH
+EOF
