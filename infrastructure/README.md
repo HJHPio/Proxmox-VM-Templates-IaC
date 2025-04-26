@@ -85,12 +85,22 @@ For additional reaserch you can use external sources like:
     ```
 
 - CentOS:
-    - Run script:
+    - (CentOS Stream 9 - 20240527) Run script:
     ```sh
     ./createCustomizedTemplateVM.sh --image-file '/var/lib/vz/template/iso/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2' \
     --image-url 'https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2' \
     --template-id '6000' \
     --template-name 'CentOS-S9-Cloud-CI-SSH' \
+    --template-pass 'centospass' \
+    --template-user 'centosuser' \
+    --ssh-public-keys "./ssh-pub-keys.key"
+    ```
+    - (CentOS Stream 10 - 20250331) Run script:
+    ```sh
+    ./createCustomizedTemplateVM.sh --image-file '/var/lib/vz/template/iso/CentOS-Stream-GenericCloud-10-20250331.0.x86_64.qcow2' \
+    --image-url 'https://cloud.centos.org/centos/10-stream/x86_64/images/CentOS-Stream-GenericCloud-10-20250331.0.x86_64.qcow2' \
+    --template-id '12000' \
+    --template-name 'CentOS-S10-Cloud-CI-SSH' \
     --template-pass 'centospass' \
     --template-user 'centosuser' \
     --ssh-public-keys "./ssh-pub-keys.key"
