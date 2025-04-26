@@ -1,0 +1,173 @@
+- id: 0
+  title: Start
+  description: |
+    Welcome to the Confizard setup process.
+    Follow the steps to configure your environment for provisioning Proxmox VM Templates via Infrastructure as Code (IaC).
+    Prerequisites: Git and Docker. Execute the script on a Linux system or within a WSL environment. 
+  icon: BookOpenIcon
+  fields: []
+  script: |
+    echo 'Welcome to Confizard!'
+
+- id: 1
+  title: Proxmox Settings
+  description: Provide connection details and general Proxmox parameters.
+  icon: CircleStackIcon
+  fields:
+    - name: TF_VAR_proxmox_host
+      label: Proxmox Host
+      type: text
+      description: Enter your Proxmox server IP address or domain name.
+      obligatory: true
+    - name: TF_VAR_proxmox_user
+      label: Proxmox Username
+      type: text
+      default: root
+      description: Enter the username used to access Proxmox.
+      obligatory: true
+    - name: TF_VAR_proxmox_password
+      label: Proxmox Password
+      type: password
+      description: Enter the password associated with your Proxmox account.
+      obligatory: true
+      sensitive: true
+    - name: TF_VAR_script_path
+      label: Script Path
+      type: text
+      default: ../scripts/createCustomizedTemplateVM.sh
+      description: Specify the path to the deployment script.
+    - name: TF_VAR_vm_template_storage_name
+      label: VM Template Storage
+      type: text
+      default: local-lvm
+      description: Enter the Proxmox storage location for templates (e.g., local-lvm).
+    - name: GENERATE_KEYS
+      label: Generate SSH Keys
+      type: checkbox
+      default: true
+      description: Enable if you want SSH keys to be generated automatically.
+    - name: TF_VAR_ssh_public_keys_src
+      label: SSH Public Keys Source
+      type: text
+      default: ../keys/ssh-pub-keys.key
+      description: Provide the path to the SSH public keys file.
+
+- id: 2
+  title: CentOS Tmplt
+  description: Define the configuration for the CentOS VM template.
+  icon: CircleStackIcon
+  fields:
+    - name: TF_VAR_centos_image_file
+      label: CentOS Image File
+      type: text
+      default: /var/lib/vz/template/iso/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2
+      description: Path to the CentOS QCOW2 image file on your Proxmox server.
+    - name: TF_VAR_centos_image_url
+      label: CentOS Image URL
+      type: text
+      default: https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-x86_64-9-20240527.0.x86_64.qcow2
+      description: URL from which the CentOS QCOW2 image can be downloaded.
+    - name: TF_VAR_centos_template_id
+      label: Template ID
+      type: text
+      default: "10000"
+      description: ID number assigned to the CentOS VM template in Proxmox.
+    - name: TF_VAR_centos_template_name
+      label: Template Name
+      type: text
+      default: CentOS-S9-CI-SSH-TF
+      description: Name for the CentOS VM template.
+    - name: TF_VAR_centos_template_password
+      label: Template Password
+      type: password
+      default: centospass
+      description: Password set for the CentOS VM template user.
+      sensitive: true
+    - name: TF_VAR_centos_template_user
+      label: Template Username
+      type: text
+      default: centosuser
+      description: Username used for the CentOS VM template.
+
+- id: 3
+  title: Fedora CoreOS Tmplt
+  description: Define the configuration for the Fedora CoreOS VM template.
+  icon: CircleStackIcon
+  fields:
+    - name: TF_VAR_fcos_image_file
+      label: FCOS Image File
+      type: text
+      default: /var/lib/vz/template/iso/fedora-coreos-39.20240210.3.0-qemu.x86_64.qcow2.xz
+      description: Path to the Fedora CoreOS QCOW2 image file on your Proxmox server.
+    - name: TF_VAR_fcos_image_url
+      label: FCOS Image URL
+      type: text
+      default: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/39.20240210.3.0/x86_64/fedora-coreos-39.20240210.3.0-qemu.x86_64.qcow2.xz
+      description: URL from which the Fedora CoreOS QCOW2 image can be downloaded.
+    - name: TF_VAR_fcos_template_id
+      label: Template ID
+      type: text
+      default: "11000"
+      description: ID number assigned to the Fedora CoreOS VM template in Proxmox.
+    - name: TF_VAR_fcos_template_name
+      label: Template Name
+      type: text
+      default: FCOS-39-QCOW2-TF
+      description: Name for the Fedora CoreOS VM template.
+    - name: TF_VAR_fcos_additional_flags
+      label: Additional Deployment Flags
+      type: text
+      default: --skip-cloud-init-settings
+      description: Optional flags to customize the Fedora CoreOS deployment (e.g.,
+        skipping cloud-init settings).
+
+- id: 4
+  title: Script description
+  description: |
+    The script will clone the repository at https://gitlab.com/HJHPio/Proxmox-VM-Templates-IaC.git,
+    build a Docker container image, and provision the VM templates infrastructure using this container with Tofu (an open-source alternative to Terraform).
+  icon: CheckIcon
+  fields: []
+  script: |
+
+    set -e
+    # 1. Clone the repository
+    git clone https://gitlab.com/HJHPio/Proxmox-VM-Templates-IaC.git
+    cd Proxmox-VM-Templates-IaC
+
+    # 2. Build the Docker image
+    cd confizard
+    docker build -t proxmox-tmplt-deployer .
+
+    cd ..
+    # 3. Run the container with repo mounted
+    docker run --rm -it \
+      -v "$(pwd)":/runtime \
+      -e GENERATE_KEYS="${GENERATE_KEYS:-true}" \
+      -e TF_VAR_proxmox_host="${TF_VAR_proxmox_host}" \
+      -e TF_VAR_proxmox_user="${TF_VAR_proxmox_user}" \
+      -e TF_VAR_proxmox_password="${TF_VAR_proxmox_password}" \
+      -e TF_VAR_script_path="${TF_VAR_script_path}" \
+      -e TF_VAR_vm_template_storage_name="${TF_VAR_vm_template_storage_name}" \
+      -e TF_VAR_ssh_public_keys_src="${TF_VAR_ssh_public_keys_src}" \
+      -e TF_VAR_centos_image_file="${TF_VAR_centos_image_file}" \
+      -e TF_VAR_centos_image_url="${TF_VAR_centos_image_url}" \
+      -e TF_VAR_centos_template_id="${TF_VAR_centos_template_id}" \
+      -e TF_VAR_centos_template_name="${TF_VAR_centos_template_name}" \
+      -e TF_VAR_centos_template_password="${TF_VAR_centos_template_password}" \
+      -e TF_VAR_centos_template_user="${TF_VAR_centos_template_user}" \
+      -e TF_VAR_fcos_image_file="${TF_VAR_fcos_image_file}" \
+      -e TF_VAR_fcos_image_url="${TF_VAR_fcos_image_url}" \
+      -e TF_VAR_fcos_template_id="${TF_VAR_fcos_template_id}" \
+      -e TF_VAR_fcos_template_name="${TF_VAR_fcos_template_name}" \
+      -e TF_VAR_fcos_additional_flags="${TF_VAR_fcos_additional_flags}" \
+      proxmox-tmplt-deployer
+
+    echo 'Confizard setup script completed successfully.'
+
+- id: 5
+  title: Automated script
+  description: Review your settings and complete the configuration.
+  icon: CheckIcon
+  fields: []
+  script: echo 'Confizard setup script completed successfully.'

@@ -1,30 +1,32 @@
+# Proxmox VM Templates IaC
+This repository demonstrates how to provision VM templates on a Proxmox instance using Infrastructure as Code (IaC).
+It currently supports two VM templates optimized for OKD deployments, but it can be easily extended to provision any VM templates available on the Proxmox host.
+
 Parent project: [OwnLab](https://github.com/orgs/HJHPio/projects/2)  
 ![OwnLabLogo](./IMGs/OwnLab/OwnLab-Logo-1_V2024.11.28.png)
-# Proxmox VM Templates IaC
-This repository is designed to provision VM templates for a Proxmox instance using code.
-Currently, it supports only two VM templates at a time, specifically tailored for OKD deployments. Future plans include support for provisioning all VM templates available in a Proxmox instance.
 
 ## Quick Setup Guide
-<!-- TODO: Update this with Confizard integration and utility container for Terraform automation -->
-1. Navigate to the Terraform directory: 
+### Confizard (Recommended)
+Visit the official [Confizard](https://confizard.hjhp.io/?extConfUrl=https://confizard-assets.pages.dev/proxmox-vm-templates-iac) portal to generate an automated deployment script.
+(The link is preconfigured with the steps corresponding to this repository, hosted at https://confizard-assets.pages.dev/proxmox-vm-templates-iac. )
+
+### Manual Deployment
+1. Navigate to the Terraform directory:  
 ```sh
 cd infrastructure/terraform
 ```
-2. Create a terraform.tfvars file from the example and populate the required variables:
+2. Create a terraform.tfvars file from the provided example and populate the required variables:  
 ```sh
 cp terraform.tfvars.example terraform.tfvars && vi terraform.tfvars
 ```
-3. Initialize and set up the infrastructure:
+3. Initialize and deploy the infrastructure:  
 ```sh
 tofu init
 tofu plan -out=init.tfplan
 tofu apply "init.tfplan"
 ```
-4. *Additional info:*  
-Detailed manual examples for using the script to create VM templates can be found in the [README](./infrastructure/README.md) located within the infrastructure directory.
-
-## Roadmap
-[ROADMAP.md](./ROADMAP.md) file includes upcoming features and future plans.
+4. *Additional information:*  
+Detailed manual instructions for creating VM templates are available in the [README](./infrastructure/README.md) located within the infrastructure directory.
 
 ## Changelog
 [CHANGELOG.md](./CHANGELOG.md) file includes project changes in each release.
@@ -54,6 +56,8 @@ Automatically detected dependencies and their acknowledgments are listed in the 
 Everyone is welcome to fork and use it for private and commercial purposes.  
 Full license can be found in [LICENSE](./LICENSE) file.  
 
-## Project status
-The project is in its initial state.  
-The scope and targets may change after discussions in issues.
+## Project Status and Roadmap
+The project is currently considered complete.  
+Previous roadmap ideas have been retained as examples for potential individual extensions, and are documented in the [ROADMAP.md](./ROADMAP.md) file.
+
+New feature requests can be submitted through discussions on any of the project's hosted mirrors.
