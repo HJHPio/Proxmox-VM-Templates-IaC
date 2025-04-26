@@ -3,7 +3,7 @@ proxmox_user              = "your-proxmox-root-username"
 proxmox_password          = "your-proxmox-password"
 script_path               = "../scripts/createCustomizedTemplateVM.sh"
 
-vm_template_storage_name  = "big-data"
+vm_template_storage_name  = "local-lvm"
 ssh_public_keys_src       = "../keys/ssh-pub-keys.key"
 
 # CentOS VM configuration
