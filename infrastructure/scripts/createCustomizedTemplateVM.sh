@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Set script variables
-ADDITIONAL_SSH_CONFIG="--sshkeys ./ssh-pub-keys.key"
+ADDITIONAL_SSH_CONFIG=""
+# ADDITIONAL_SSH_CONFIG="--sshkeys ./ssh-pub-keys.key"
 TEMPLATE_STORAGE_NAME='local-lvm'
 TEMPLATE_MEM=2048
 TEMPLATE_CORES=2
@@ -184,6 +185,18 @@ else
   IS_XZ_FILE=false
 fi
 
+if [[ "$IMAGE_FILE" == *.bz2 ]]; then
+  IS_BZ2_FILE=true
+else
+  IS_BZ2_FILE=false
+fi
+
+if [[ "$IMAGE_FILE" == *.gz ]]; then
+  IS_GZ_FILE=true
+else
+  IS_GZ_FILE=false
+fi
+
 # Check if required commands are available
 check_command qm
 check_command wget
@@ -198,7 +211,10 @@ if [ "$NO_DOWNLOAD" = true ]; then
         echo "Using existing image file $IMAGE_FILE."
     fi
 else
-    if [ ! -f "$IMAGE_FILE" ]; then
+    if [ ! -f "$IMAGE_FILE" ] && \
+      [ ! -f "${IMAGE_FILE%.gz}" ] && \
+      [ ! -f "${IMAGE_FILE%.xz}" ] && \
+      [ ! -f "${IMAGE_FILE%.bz2}" ]; then
         echo "Download image..."
         wget -q --show-progress -O "$IMAGE_FILE" "$IMAGE_URL"
         if [ $? -ne 0 ]; then
@@ -216,8 +232,41 @@ else
             exit 1
           fi
         fi
+        
+        # Decompress if the image is an bz2 file
+        if [ "$IS_BZ2_FILE" = true ]; then
+          echo "Decompressing BZ2 image..."
+          bzip2 -d "$IMAGE_FILE"
+          IMAGE_FILE="${IMAGE_FILE%.bz2}"
+          if [ $? -ne 0 ]; then
+            echo "Error: Failed to decompress image."
+            exit 1
+          fi
+        fi
+
+        # Decompress if the image is an gz file
+        if [ "$IS_GZ_FILE" = true ]; then
+          echo "Decompressing GZ image..."
+          gzip -d "$IMAGE_FILE"
+          IMAGE_FILE="${IMAGE_FILE%.gz}"
+          if [ $? -ne 0 ]; then
+            echo "Error: Failed to decompress image."
+            exit 1
+          fi
+        fi
+
     else
-        echo "Image file $IMAGE_FILE already exists. Skipping download."
+        echo "Image file $IMAGE_FILE already exists. Skipping download and updating IMAGE_FILE name"
+        if [ "$IS_XZ_FILE" = true ]; then
+          IMAGE_FILE="${IMAGE_FILE%.xz}"
+        fi
+        if [ "$IS_BZ2_FILE" = true ]; then
+          IMAGE_FILE="${IMAGE_FILE%.bz2}"
+        fi
+        if [ "$IS_GZ_FILE" = true ]; then
+          IMAGE_FILE="${IMAGE_FILE%.gz}"
+        fi
+        echo "Fixed image file name $IMAGE_FILE."
     fi
 fi
 
