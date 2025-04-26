@@ -1,6 +1,4 @@
-- Update SSH Keys generation and distribution to avoid recreating keys in future tofu destroy && tofu apply - duplicate/redundant keys transfered to proxmox instance
-- Add integration with Confizard for easier setup  
-- Split the cleanup script by resource to enable more granular infrastructure  provisioning (see (repo-root)/infrastructure/terraform/main.tf - resource cleanup)  
-- Add a container for Terraform deployments to the Utility Containers repository  
-- Update examples to prepare templates for OKD 4.17
-- Unlock the number of templates: Instead of covering only essential ones for OKD, enable provisioning for all VM templates in Proxmox 
+Potential Project Extension Ideas (not currently planned for the published example):
+  - Extend the infrastructure example to support provisioning of all VM templates available on Proxmox nodes.
+  - Improve SSH key generation and distribution to prevent redundant key transfers and avoid unnecessary regeneration after tofu destroy && tofu apply.
+  - Refactor the cleanup script by separating logic per resource to enable more granular and modular infrastructure provisioning (refer to (repo-root)/infrastructure/terraform/main.tf).
